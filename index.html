@@ -1,0 +1,2273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QED — Los Caminos de la Luz · Feynman</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=JetBrains+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters:[
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false}
+  ]})"></script>
+
+<style>
+:root {
+  --bg: #04060f;
+  --bg2: #080c1a;
+  --gold: #c8a84b;
+  --gold-light: #f0d070;
+  --gold-dim: #7a6030;
+  --cyan: #4fc3d4;
+  --cyan-dim: #1a5a66;
+  --red: #e05a4a;
+  --green: #4adf90;
+  --text: #d8d0c0;
+  --text-dim: #7a7060;
+  --border: rgba(200,168,75,0.2);
+  --glow: 0 0 30px rgba(200,168,75,0.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+/* ── STARS BACKGROUND ── */
+#stars-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1rem 3rem;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(4,6,15,0.95), transparent);
+  backdrop-filter: blur(4px);
+  border-bottom: 1px solid var(--border);
+}
+nav a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+nav a:hover { color: var(--gold); }
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--gold);
+  margin-right: auto;
+  font-style: italic;
+}
+
+/* ── LAYOUT ── */
+.page { position: relative; z-index: 1; }
+
+section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+}
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 100%;
+  padding: 0 10vw;
+  position: relative;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.3s forwards;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  line-height: 1.0;
+  color: #fff;
+  margin-bottom: 1rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.5s forwards;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--gold);
+  display: block;
+}
+.hero-sub {
+  font-size: 1.4rem;
+  color: var(--text-dim);
+  max-width: 600px;
+  margin-top: 1.5rem;
+  font-style: italic;
+  opacity: 0;
+  animation: fadeUp 1s 0.7s forwards;
+}
+.hero-scroll {
+  margin-top: 4rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--gold-dim);
+  opacity: 0;
+  animation: fadeUp 1s 1.2s forwards;
+}
+.hero-scroll::before {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 40px;
+  background: var(--gold-dim);
+  margin: 0 auto 1rem;
+  animation: pulseY 2s infinite;
+}
+
+/* ── CANVAS HERO ── */
+#hero-canvas {
+  position: absolute;
+  right: 0; top: 0;
+  width: 55%;
+  height: 100%;
+  opacity: 0.7;
+}
+
+/* ── SECTION TITLES ── */
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fff;
+  margin-bottom: 2rem;
+}
+h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--gold-light);
+  margin: 2.5rem 0 1rem;
+}
+
+p { margin-bottom: 1.2rem; color: var(--text); }
+
+/* ── DIVIDER ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  margin: 1rem 0 3rem;
+}
+
+/* ── FORMULA BOX ── */
+.formula-box {
+  background: rgba(200,168,75,0.05);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 4px;
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.formula-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at top left, rgba(200,168,75,0.06), transparent 60%);
+  pointer-events: none;
+}
+.formula-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.formula-desc {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+/* ── INFO CARDS ── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+.card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.5rem;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.card:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-3px);
+}
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+.card h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--gold-light);
+  margin-bottom: 0.5rem;
+}
+.card p { font-size: 0.95rem; color: var(--text-dim); margin: 0; }
+
+/* ── QUOTE ── */
+.quote {
+  border-left: 3px solid var(--gold);
+  padding: 1.2rem 2rem;
+  margin: 2.5rem 0;
+  font-style: italic;
+  font-size: 1.3rem;
+  color: #c0b890;
+  background: rgba(200,168,75,0.04);
+}
+.quote cite {
+  display: block;
+  font-size: 0.85rem;
+  font-style: normal;
+  color: var(--gold-dim);
+  margin-top: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+}
+
+/* ── INTERACTIVE CONTAINERS ── */
+.interactive-wrap {
+  background: rgba(4,10,25,0.8);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+.interactive-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+.ctrl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.ctrl-group label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+input[type=range] {
+  -webkit-appearance: none;
+  width: 160px;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--gold);
+}
+.ctrl-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--gold);
+}
+
+/* ── CANVAS CONTAINERS ── */
+canvas {
+  display: block;
+  border-radius: 4px;
+}
+.canvas-wrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+.canvas-caption {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  font-style: italic;
+  text-align: center;
+  margin-top: 0.75rem;
+}
+
+/* ── SECTION BG ACCENT ── */
+.section-accent {
+  position: relative;
+}
+.section-accent::before {
+  content: '';
+  position: absolute;
+  left: -100px;
+  top: 50%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(ellipse, rgba(200,168,75,0.04) 0%, transparent 70%);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* ── STEP BLOCKS ── */
+.steps {
+  counter-reset: step;
+  margin: 2rem 0;
+}
+.step {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: start;
+}
+.step-num {
+  counter-increment: step;
+  width: 3rem; height: 3rem;
+  border: 1px solid var(--gold-dim);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.step-content h4 {
+  font-family: 'Playfair Display', serif;
+  color: var(--gold-light);
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+}
+.step-content p { font-size: 1rem; margin: 0; }
+
+/* ── HIGHLIGHT ── */
+.hl { color: var(--gold-light); font-weight: 500; }
+.hl-cyan { color: var(--cyan); }
+.hl-red { color: var(--red); }
+.hl-green { color: var(--green); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseY {
+  0%,100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── RESPONSIVE / MOBILE ── */
+@media (max-width: 768px) {
+  body { font-size: 1.05rem; }
+  
+  nav {
+    padding: 0.75rem 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  nav a { font-size: 0.65rem; }
+  .nav-logo { font-size: 0.9rem; }
+  
+  section { padding: 3rem 1.5rem; }
+  
+  #hero {
+    padding: 0 5vw;
+    min-height: 80vh;
+  }
+  .hero-eyebrow { font-size: 0.65rem; }
+  .hero-title { font-size: clamp(2rem, 10vw, 4rem); }
+  .hero-sub { font-size: 1.1rem; }
+  
+  h2 { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+  h3 { font-size: 1.3rem; }
+  
+  .formula-box { padding: 1rem 1.2rem; }
+  .formula-label { font-size: 0.62rem; }
+  .formula-desc { font-size: 0.88rem; }
+  
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .quote {
+    font-size: 1.1rem;
+    padding: 1rem 1.2rem;
+  }
+  
+  .steps { margin: 1.5rem 0; }
+  .step {
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .step-num {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+  .step-content h4 { font-size: 1rem; }
+  .step-content p { font-size: 0.95rem; }
+  
+  .interactive-wrap { padding: 1rem; }
+  .interactive-title { font-size: 0.65rem; }
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .ctrl-group { width: 100%; }
+  input[type=range] { width: 100%; }
+  
+  canvas {
+    max-width: 100%;
+    height: auto !important;
+  }
+  #phasor-canvas { height: 280px !important; }
+  #photon-canvas { height: 260px !important; }
+  #dslit-canvas { height: 320px !important; }
+  #grating-canvas { height: 340px !important; }
+  #arago-canvas { height: 340px !important; }
+  
+  #hero-canvas { width: 100%; opacity: 0.3; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 1rem; }
+  section { padding: 2.5rem 1.2rem; }
+  
+  .hero-title { font-size: clamp(1.8rem, 12vw, 3rem); }
+  .hero-sub { font-size: 1rem; }
+  
+  h2 { font-size: clamp(1.4rem, 6vw, 1.8rem); }
+  h3 { font-size: 1.15rem; }
+  
+  .formula-box { padding: 0.9rem 1rem; }
+  
+  nav {
+    padding: 0.6rem 1rem;
+    gap: 0.6rem;
+  }
+  nav a { font-size: 0.6rem; letter-spacing: 0.1em; }
+  
+  canvas {
+    border-radius: 3px;
+  }
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 3rem;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  position: relative;
+  z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<!-- STARFIELD -->
+<canvas id="stars-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">QED</span>
+  <a href="#intro">Introducción</a>
+  <a href="#photon">Fotón libre</a>
+  <a href="#doble-rendija">Doble rendija</a>
+  <a href="#difraccion">Difracción</a>
+  <a href="#arago">Punto de Arago</a>
+</nav>
+
+<div class="page">
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<div id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <p class="hero-eyebrow">Electrodinámica Cuántica · QED · Richard Feynman</p>
+  <h1 class="hero-title">
+    Los Caminos
+    <em>de la Luz</em>
+  </h1>
+  <p class="hero-sub">
+    La realidad no elige un único camino. Explora todos los caminos posibles y se suman.
+    Y de esa suma infinita emerge el mundo que vemos.
+  </p>
+  <div class="hero-scroll">↓ Explorar</div>
+</div>
+
+<!-- ═══════════════════ INTRO ═══════════════════ -->
+<section id="intro" class="section-accent reveal">
+  <p class="section-label">§ 01 — Visión General</p>
+  <h2>Cómo Funciona la Realidad Cuántica</h2>
+  <div class="divider"></div>
+
+  <p>
+    El universo funciona de manera radicalmente distinta a nuestra intuición cotidiana.
+    En el mundo clásico —el que experimentamos a diario— una pelota que lanzamos sigue
+    <em>una única trayectoria</em> bien definida, dictada por las leyes de Newton.
+    Pero a escala microscópica, la naturaleza opera bajo principios cuánticos profundamente
+    diferentes.
+  </p>
+
+  <p>
+    La idea central de la mecánica cuántica de Feynman es esta:
+    <span class="hl">cuando una partícula (un fotón, un electrón, cualquier partícula) va del
+    punto $A$ al punto $B$, no "elige" un único camino. En su lugar, la partícula explora
+    simultáneamente <em>todos los caminos posibles</em> que conectan $A$ con $B$</span>.
+    Cada uno de estos caminos —desde la línea recta hasta los más extravagantes zigzags—
+    contribuye con una cierta "amplitud" a la probabilidad final. La naturaleza
+    <em>suma todas esas contribuciones</em>, y de esa suma emerge lo que observamos.
+  </p>
+
+  <p>
+    Esto no es una metáfora. Es la forma literal en que la luz y la materia se comportan.
+    Los patrones de interferencia, la difracción, el efecto túnel cuántico, la estabilidad
+    de los átomos... todo deriva de este principio: <span class="hl-cyan">la realidad es la
+    suma coherente de todas las posibilidades</span>.
+  </p>
+
+  <p>
+    ¿Cómo es posible que la mayoría de esos caminos se cancelen entre sí, dejando solo
+    una trayectoria aparentemente clásica en nuestro mundo macroscópico? La respuesta está
+    en tres conceptos matemáticos encadenados, que ahora vamos a explorar con cuidado.
+  </p>
+
+  <div class="divider"></div>
+  <h2 style="margin-top:2rem">Las Tres Ideas Clave</h2>
+
+  <p>
+    Para entender la teoría QED de Feynman y los caminos de la luz, es fundamental comprender
+    tres conceptos encadenados: la <span class="hl">acción</span>, la <span class="hl-cyan">fase</span>
+    y la <span class="hl-green">amplitud de probabilidad</span>. Cada uno deriva del anterior.
+    Veámoslos con cuidado.
+  </p>
+
+  <!-- CONCEPT 1: ACTION -->
+  <h3>① La Acción: el "coste" de cada trayectoria</h3>
+
+  <p>
+    Imagina que una partícula va del punto $A$ al punto $B$. Hay infinitos caminos posibles que
+    la conectan. A cada camino $\gamma$ le podemos asignar un número real llamado
+    <span class="hl">acción</span> $S[\gamma]$: una especie de "coste dinámico" que acumula
+    cómo de energética ha sido la trayectoria a lo largo del tiempo. Se define como la integral
+    temporal del <em>Lagrangiano</em> $\mathcal{L} = T - V$ (energía cinética menos potencial):
+  </p>
+
+  <div class="formula-box">
+    <div class="formula-label">La Acción</div>
+    $$S[\gamma] = \int_{t_A}^{t_B} \mathcal{L}\,dt = \int_{t_A}^{t_B}\bigl(T - V\bigr)\,dt$$
+    <div class="formula-desc">
+      Cada camino posible $\gamma$ tiene una acción distinta $S[\gamma]$.
+      La acción tiene unidades de J$\cdot$s (julio$\cdot$segundo), las mismas que $\hbar$.
+      Cuanto más "tortuoso" o energético sea el camino, mayor será su acción.
+    </div>
+  </div>
+
+  <p>
+    En la física clásica (Newton, siglo XVII), la naturaleza simplemente <em>elige</em> el camino
+    donde la acción es mínima o estacionaria ($\delta S = 0$). Es el famoso
+    <span class="hl">Principio de Mínima Acción</span>. Pero la mecánica cuántica revela que
+    esto es solo una aproximación válida a gran escala. A nivel fundamental, el universo es mucho
+    más rico: <em>todos los caminos participan</em>.
+  </p>
+
+  <!-- CONCEPT 2: PHASE -->
+  <h3>② La Fase: el "reloj" de cada camino</h3>
+
+  <p>
+    Aquí entra la cuántica. En mecánica cuántica, cada partícula tiene asociada una
+    <em>función de onda</em>: una cantidad compleja que describe su estado. La idea
+    revolucionaria de Feynman es que a cada camino posible $\gamma$ le corresponde
+    un <span class="hl-cyan">número complejo de módulo uno</span>: una flecha de longitud unitaria
+    en el plano complejo, apuntando en la dirección de su <em>fase</em> $\Phi[\gamma]$.
+  </p>
+
+  <p>
+    Esta fase no es arbitraria. Está directamente determinada por la acción del camino,
+    escalada por la constante de Planck reducida $\hbar \approx 10^{-34}$ J·s:
+  </p>
+
+  <div class="formula-box">
+    <div class="formula-label">La Fase — Puente entre Clásico y Cuántico</div>
+    $$\Phi[\gamma] = \frac{S[\gamma]}{\hbar}$$
+    <div class="formula-desc">
+      Esta es la relación más importante de toda la teoría. La fase de un camino es su acción
+      dividida por $\hbar$. Como $\hbar$ es un número minúsculo, la fase puede variar
+      enormemente entre caminos con acciones ligeramente distintas: esto provoca que muchas
+      flechas apunten en direcciones opuestas y se cancelen.
+    </div>
+  </div>
+
+  <h3 style="font-size:1.2rem; color:var(--text-dim); margin-top:1.5rem">
+    Derivación: ¿De dónde sale $\Phi = S/\hbar$?
+  </h3>
+
+  <p>
+    Esta relación no es una suposición arbitraria. Emerge directamente de la mecánica cuántica
+    ondulatoria. Veamos el razonamiento matemático paso a paso.
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>La función de onda de una partícula libre</h4>
+        <p>Según la ecuación de Schrödinger, una partícula con energía $E$ y momento $p$
+        tiene una función de onda plana:
+        $$\psi(x,t) = A\,e^{\,i(px - Et)/\hbar}$$
+        El argumento del exponencial, $(px - Et)/\hbar$, es la <em>fase</em> de la onda.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Interpretación física del argumento</h4>
+        <p>El producto $px$ tiene dimensiones de J$\cdot$s (momento $\times$ posición = acción).
+        El producto $Et$ también tiene dimensiones de J$\cdot$s (energía $\times$ tiempo = acción).
+        Por tanto, la combinación $px - Et$ es una cantidad con dimensiones de acción.
+        De hecho, reconocemos que:
+        $$px - Et = \int \bigl(p\,dx - E\,dt\bigr)$$
+        Esta integral es precisamente la <em>acción</em> en el formalismo hamiltoniano.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>Del hamiltoniano al lagrangiano</h4>
+        <p>Para conectar con el lagrangiano, recordamos la transformación de Legendre:
+        $$\mathcal{L} = p\dot{x} - H = p\dot{x} - E$$
+        donde $H$ es el hamiltoniano. Integrando en el tiempo:
+        $$S = \int_{t_A}^{t_B} \mathcal{L}\,dt = \int_{t_A}^{t_B}\bigl(p\dot{x} - E\bigr)\,dt
+        = \int p\,dx - \int E\,dt$$
+        Esta es exactamente la acción $S$ en términos del momento y la energía.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>La fase cuántica como acción escalada</h4>
+        <p>Volviendo a la función de onda $\psi = A\,e^{i(px-Et)/\hbar}$, vemos que su fase es:
+        $$\Phi = \frac{px - Et}{\hbar} = \frac{S}{\hbar}$$
+        Por tanto, <span class="hl">la fase de la función de onda es la acción clásica dividida
+        por $\hbar$</span>. Esta es la conexión fundamental.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h4>Generalización a cualquier camino</h4>
+        <p>Para una partícula que no sigue un movimiento rectilíneo uniforme, sino un camino
+        arbitrario $\gamma$, la acción varía de camino a camino: $S[\gamma]$.
+        Feynman generalizó esto: <em>cada camino posible</em> tiene asociada una fase
+        $\Phi[\gamma] = S[\gamma]/\hbar$, y la amplitud total es la suma (integral) sobre
+        todos los caminos:
+        $$\mathcal{A} = \int \mathcal{D}[\gamma]\; e^{\,i\,S[\gamma]/\hbar}$$
+        Esta es la <em>integral de caminos</em>.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:1.2rem; color:var(--text-dim); margin-top:1.5rem">
+    ¿Por qué $e^{iS/\hbar}$ y no otra función?
+  </h3>
+
+  <p>
+    La elección de $e^{iS/\hbar}$ como peso de cada camino no es arbitraria: es la única forma
+    matemática que garantiza que, en el límite $\hbar \to 0$ (o equivalentemente $S \gg \hbar$),
+    la suma sobre caminos se concentre en torno al camino de acción estacionaria por el
+    <em>método de la fase estacionaria</em>. En ese límite, la integral de caminos reproduce
+    exactamente las ecuaciones de Euler-Lagrange y, con ellas, toda la mecánica clásica.
+  </p>
+
+  <p>
+    Feynman demostró que si exigimos dos condiciones fundamentales:
+  </p>
+  <ol style="margin-left:2rem; color:var(--text); line-height:1.8">
+    <li><strong>Límite clásico:</strong> En el límite $\hbar \to 0$ (o $S \gg \hbar$),
+    la suma sobre caminos debe concentrarse en el camino de acción estacionaria $\delta S = 0$,
+    recuperando así las leyes de Newton.</li>
+    <li><strong>Consistencia dimensional:</strong> La fase $\Phi$ debe ser adimensional
+    (un ángulo puro), y debe construirse a partir de la acción $S$ y las constantes universales.</li>
+  </ol>
+
+  <p>
+    La única función que satisface ambas condiciones es $e^{iS/\hbar}$. Cualquier otra elección
+    (por ejemplo, $e^{S/\hbar}$ sin la $i$, o $e^{-S^2/\hbar^2}$) falla al reproducir el
+    límite clásico. La presencia de la unidad imaginaria $i$ es esencial: hace que el peso
+    de cada camino sea un <em>número complejo de módulo uno</em>, permitiendo interferencias
+    constructivas y destructivas. Sin la $i$, no habría interferencia cuántica, solo suma
+    aritmética ordinaria.
+  </p>
+
+  <p>
+    Además, dimensionalmente: $[S] = \text{J}\cdot\text{s}$, $[\hbar] = \text{J}\cdot\text{s}$, por lo que
+    $[S/\hbar] = 1$ (adimensional). Es perfecto para ser el argumento de una exponencial
+    compleja $e^{i\Phi}$, que representa una rotación en el plano complejo: la "flecha giratoria"
+    de Feynman.
+  </p>
+
+  <p>
+    Piensa en la fase como un <span class="hl-cyan">reloj girador</span>: cuanta más acción
+    acumula el camino, más ha girado el reloj. Dos caminos con la misma acción tienen el reloj
+    en la misma posición; sus contribuciones se <em>suman</em>. Dos caminos con acciones muy
+    diferentes tienen el reloj en posiciones opuestas; sus contribuciones se <em>cancelan</em>.
+  </p>
+
+  <p>
+    La constante $\hbar \approx 1.055 \times 10^{-34}$ J$\cdot$s actúa como el divisor que decide
+    cuánto "gira" la fase por unidad de acción. Para un electrón en un átomo, $S \sim \hbar$:
+    la fase varía suavemente entre caminos y la interferencia cuántica domina.
+    Para una pelota de tenis, $S \sim 10^{30}\,\hbar$: la fase oscila millones de veces
+    entre caminos infinitamente próximos y todo se cancela salvo la trayectoria clásica.
+  </p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">⚛️</div>
+      <h4>$S \sim \hbar$ — Cuántico</h4>
+      <p>Muchos caminos contribuyen con fases parecidas. La interferencia es esencial.
+      La partícula no tiene trayectoria bien definida.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌍</div>
+      <h4>$S \gg \hbar$ — Clásico</h4>
+      <p>La fase varía tan rápido que todo se cancela salvo el camino estacionario.
+      Las leyes deterministas de Newton emergen estadísticamente.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔗</div>
+      <h4>QED — La teoría completa</h4>
+      <p>Extiende la integral de caminos al campo electromagnético cuántico: fotones,
+      electrones e interacciones, con una precisión experimental de 1 en $10^{12}$.</p>
+    </div>
+  </div>
+
+  <!-- CONCEPT 3: AMPLITUDE + PROBABILITY -->
+  <h3>③ La Amplitud y la Probabilidad: de la suma emerge la realidad</h3>
+
+  <p>
+    La <span class="hl-green">amplitud de probabilidad</span> $\mathcal{A}(A \to B)$ de que
+    una partícula vaya de $A$ a $B$ se obtiene <em>sumando las contribuciones de todos los
+    caminos posibles</em>. Cada camino aporta su flecha compleja $e^{i\Phi[\gamma]}$:
+  </p>
+
+  <div class="formula-box">
+    <div class="formula-label">Amplitud de Probabilidad — Integral de Caminos de Feynman</div>
+    $$\mathcal{A}(A \to B) = \sum_{\text{todos los caminos}} e^{\,i\,S[\gamma]/\hbar}
+    \;\longrightarrow\;
+    K(B,A) = \int \mathcal{D}[\gamma]\; e^{\,i\,S[\gamma]/\hbar}$$
+    <div class="formula-desc">
+      La suma discreta (izquierda) se convierte en una integral funcional (derecha) cuando
+      consideramos el continuo de todos los caminos posibles. $\mathcal{D}[\gamma]$ indica
+      que integramos literalmente sobre <strong>el espacio de todas las trayectorias</strong>.
+      Esta es la <em>Integral de Caminos de Feynman</em>.
+    </div>
+  </div>
+
+  <p>
+    Pero la amplitud $\mathcal{A}$ no es directamente observable. Es un número complejo.
+    Lo que realmente medimos en el laboratorio es la <span class="hl-green">probabilidad</span>
+    $P$, que se obtiene elevando al cuadrado el módulo de la amplitud:
+  </p>
+
+  <div class="formula-box">
+    <div class="formula-label">De la Amplitud a la Probabilidad</div>
+    $$P(A \to B) = \bigl|\mathcal{A}(A \to B)\bigr|^2 = |K(B,A)|^2$$
+    <div class="formula-desc">
+      Esta regla —llamada <em>regla de Born</em>— es el puente entre el formalismo matemático
+      cuántico y los resultados experimentales. La amplitud puede ser negativa, imaginaria o
+      compleja; la probabilidad siempre es real, positiva y entre 0 y 1.
+    </div>
+  </div>
+
+  <p>
+    La cadena completa es: <span class="hl">Acción</span> $S[\gamma]$
+    → <span class="hl-cyan">Fase</span> $\Phi = S/\hbar$
+    → <span class="hl-green">Amplitud</span> $\mathcal{A} = \sum e^{i\Phi}$
+    → <span class="hl-green">Probabilidad</span> $P = |\mathcal{A}|^2$.
+    Todo el aparato de QED se resume en este flujo.
+  </p>
+
+  <!-- CONCEPT 4: CONSTRUCTIVE/DESTRUCTIVE -->
+  <h3>④ Interferencia: por qué el mundo parece clásico</h3>
+
+  <p>
+    El resultado de sumar todas estas flechas complejas depende crucialmente de
+    <em>cómo varían las fases</em> entre caminos vecinos:
+  </p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🔴</div>
+      <h4>Interferencia destructiva</h4>
+      <p>En zonas donde la acción varía drásticamente entre caminos vecinos, sus flechas apuntan en
+      todas las direcciones y se cancelan. La probabilidad en esas regiones es nula o mínima.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🟢</div>
+      <h4>Interferencia constructiva</h4>
+      <p>Cerca del camino de <em>acción estacionaria</em> ($\delta S \approx 0$), los caminos vecinos
+      tienen fases casi iguales. Sus flechas se alinean y la suma es máxima: alta probabilidad.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔆</div>
+      <h4>El límite clásico</h4>
+      <p>Para objetos grandes, $S \gg \hbar$. La fase oscila tan rápido que casi todo se cancela,
+      salvo el camino estacionario. Por eso a nuestra escala el mundo parece determinista.</p>
+    </div>
+  </div>
+
+  <div class="quote">
+    "La amplitud de que una partícula vaya de A a B es la suma de las contribuciones
+    de todos los caminos que van de A a B."
+    <cite>— Richard P. Feynman, QED: The Strange Theory of Light and Matter (1985)</cite>
+  </div>
+
+  <h3>Las Flechas de Feynman: Una Imagen Poderosa</h3>
+
+  <p>
+    Para visualizar este fenómeno sin ecuaciones complejas, Feynman propuso representar
+    $e^{i\Phi[\gamma]}$ como una <span class="hl">flecha giratoria</span>: un vector de longitud 1
+    en el plano, cuyo ángulo es la fase del camino. La amplitud total se obtiene encadenando
+    todas las flechas de punta a cola. La <em>flecha resultante</em> es la amplitud:
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Una flecha por camino</h4>
+        <p>Cada camino $\gamma$ tiene una flecha de longitud 1 y ángulo $\Phi[\gamma] = S[\gamma]/\hbar$.
+        Caminos con más acción tienen la flecha más "girada".</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Sumar encadenando flechas</h4>
+        <p>Las flechas de caminos muy alejados del mínimo apuntan en todas direcciones y se anulan.
+        Las flechas de caminos próximos al estacionario están casi alineadas y se suman.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>La flecha resultante → probabilidad</h4>
+        <p>La longitud de la flecha resultante al cuadrado es la probabilidad $P = |\mathcal{A}|^2$.
+        Una flecha larga significa alta probabilidad; flechas que se cancelan, probabilidad nula.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE: Phasor Sum -->
+  <div class="interactive-wrap reveal">
+    <div class="interactive-title">⟩ Visualizador de Flechas de Feynman</div>
+    <div class="canvas-wrapper">
+      <canvas id="phasor-canvas" width="900" height="340"></canvas>
+    </div>
+    <div class="controls">
+      <div class="ctrl-group">
+        <label>N.º de caminos</label>
+        <input type="range" id="phasor-n" min="5" max="60" value="30">
+        <span class="ctrl-val" id="phasor-n-val">30</span>
+      </div>
+      <div class="ctrl-group">
+        <label>Dispersión de acciones (ħ)</label>
+        <input type="range" id="phasor-spread" min="1" max="20" value="8">
+        <span class="ctrl-val" id="phasor-spread-val">8</span>
+      </div>
+    </div>
+    <p class="canvas-caption">
+      Izquierda: las flechas individuales de cada camino. Derecha: su suma vectorial (la amplitud total).
+      Aumenta la dispersión para ver cómo los caminos alejados del mínimo se anulan.
+    </p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════ FOTÓN LIBRE ═══════════════════ -->
+<section id="photon" class="reveal">
+  <p class="section-label">§ 02 — Aplicando la Integral de Caminos</p>
+  <h2>El Fotón en el Espacio Libre</h2>
+  <div class="divider"></div>
+
+  <p>
+    Tomemos el caso más simple: un fotón que viaja de $A$ a $B$ en el vacío, sin obstáculos.
+    Desde el punto de vista clásico, la respuesta es trivial: viaja en línea recta.
+    Pero en QED, la pregunta correcta no es <em>"¿qué camino toma?"</em>, sino
+    <em>"¿cuál es la amplitud de probabilidad de que llegue a $B$?"</em>
+  </p>
+
+  <p>
+    Para calcularlo, aplicamos la integral de caminos de Feynman: sumamos las contribuciones
+    de <span class="hl">todos los caminos posibles</span> que conectan $A$ con $B$,
+    incluyendo los más retorcidos e improbables. Cada camino $\gamma$ de longitud $\ell[\gamma]$
+    aporta una flecha con fase:
+  </p>
+
+  <div class="formula-box">
+    <div class="formula-label">Fase de cada camino para el fotón</div>
+    $$\Phi[\gamma] = \frac{S[\gamma]}{\hbar} = \frac{2\pi\,\ell[\gamma]}{\lambda}$$
+    <div class="formula-desc">
+      Para un fotón, la acción de cada camino es proporcional a su longitud $\ell[\gamma]$:
+      cuanto más largo el camino, más ha "girado" su flecha. La constante de proporcionalidad
+      es $2\pi/\lambda$, donde $\lambda$ es la longitud de onda del fotón.
+      La fase crece con la longitud del camino: un camino dos veces más largo tiene el doble de fase.
+    </div>
+  </div>
+
+  <h3>¿Qué ocurre al sumar todos los caminos?</h3>
+
+  <p>
+    Dividamos mentalmente el espacio de caminos en grupos según cuánto se desvían de la
+    línea recta. Consideremos tres grupos:
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Caminos muy desviados (extremos)</h4>
+        <p>Son mucho más largos que la línea recta. Sus fases $\Phi = 2\pi\ell/\lambda$
+        son muy distintas entre caminos vecinos. Al sumar sus flechas, estas apuntan en todas
+        las direcciones del plano complejo y se cancelan casi completamente.
+        <span class="hl-red">Contribución neta: ≈ 0.</span></p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Caminos próximos a la línea recta</h4>
+        <p>Aquí la longitud varía mínimamente entre caminos vecinos: la fase cambia muy poco.
+        Las flechas apuntan casi en la misma dirección y se alinean.
+        <span class="hl-green">Contribución neta: máxima. Son los caminos que dominan la amplitud total.</span></p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>La amplitud total</h4>
+        <p>La suma de todos los caminos produce una amplitud $\mathcal{A}$ grande y bien definida,
+        concentrada en la dirección de la fase de la línea recta.
+        La probabilidad $P = |\mathcal{A}|^2$ es máxima a lo largo del eje $A$-$B$.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE: Free photon paths -->
+  <div class="interactive-wrap reveal">
+    <div class="interactive-title">⟩ Fotón en el espacio libre — Integral de caminos</div>
+    <div class="canvas-wrapper">
+      <canvas id="photon-canvas" width="900" height="320"></canvas>
+    </div>
+    <div class="controls">
+      <div class="ctrl-group">
+        <label>N.º de caminos mostrados</label>
+        <input type="range" id="ph-paths" min="5" max="80" value="40">
+        <span class="ctrl-val" id="ph-paths-val">40</span>
+      </div>
+      <div class="ctrl-group">
+        <label>Amplitud de desviación</label>
+        <input type="range" id="ph-amp" min="10" max="120" value="60">
+        <span class="ctrl-val" id="ph-amp-val">60</span>
+      </div>
+    </div>
+    <p class="canvas-caption">
+      El color de cada camino representa su fase $\Phi = 2\pi\ell/\lambda$.
+      Los caminos del centro (línea recta y sus vecinos) tienen fases similares: se suman.
+      Los caminos extremos tienen fases caóticas: se cancelan. La línea dorada es el camino dominante.
+    </p>
+  </div>
+
+  <h3>La Amplitud de Probabilidad total</h3>
+
+  <p>
+    Matemáticamente, la amplitud del fotón libre se calcula integrando sobre todos los caminos.
+    El resultado es que la probabilidad de encontrar el fotón se concentra a lo largo del eje
+    óptico $A$-$B$, con una dispersión lateral del orden de $\sqrt{\lambda z}$
+    (donde $z$ es la distancia recorrida): la <em>anchura de difracción</em>, que es muy pequeña
+    para longitudes de onda visibles. Por eso, a escala humana, la luz parece viajar en línea recta.
+  </p>
+
+  <p>
+    Pero el fotón <span class="hl">no "sabe" que va en línea recta</span>. Lo que ocurre es que
+    los caminos que no son la línea recta se cancelan entre sí. Si perturbamos el experimento
+    —poniendo un obstáculo, una rendija o un espejo— interrumpimos esas cancelaciones y la luz
+    se comporta de maneras sorprendentes, como veremos en los siguientes apartados.
+  </p>
+
+  <h3>→ La conexión clásica: Principio de Fermat</h3>
+
+  <p>
+    Pierre de Fermat enunció en 1662 que <em>"la luz toma el camino de menor tiempo"</em>.
+    Hoy sabemos que esto no es un postulado fundamental, sino una <span class="hl">consecuencia
+    directa de la integral de caminos</span>: el camino más corto (en el vacío) es el de
+    fase estacionaria $\delta\Phi = 0$, es decir, el camino donde los vecinos tienen la misma
+    fase y se suman constructivamente. Fermat capturó intuitivamente, tres siglos antes que
+    Feynman, la misma idea: la naturaleza "optimiza". Ahora sabemos que no es una elección,
+    sino el resultado de que todos los demás caminos se destruyen cuánticamente.
+  </p>
+
+  <div class="formula-box">
+    <div class="formula-label">Principio de Fermat — Emergencia cuántica</div>
+    $$\text{Fermat: } \delta \ell = 0 \;\;\Longleftrightarrow\;\; \text{QED: } \delta\Phi = \frac{2\pi}{\lambda}\,\delta\ell = 0$$
+    <div class="formula-desc">
+      El camino de mínima longitud (Fermat) coincide exactamente con el camino de fase estacionaria (QED).
+      En medios refractivos, la fase es $\Phi = 2\pi n\,\ell/\lambda$, y el camino estacionario
+      es el de mínimo <em>camino óptico</em> $n\ell$: esto produce la ley de Snell $n_1\sin\theta_1 = n_2\sin\theta_2$.
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════ DOBLE RENDIJA ═══════════════════ -->
+<section id="doble-rendija" class="reveal">
+  <p class="section-label">§ 03 — El Experimento Definitivo</p>
+  <h2>La Doble Rendija</h2>
+  <div class="divider"></div>
+
+  <p>
+    El experimento de la doble rendija es, según Feynman, "el único misterio" de la mecánica
+    cuántica. Un fotón que llega a una pantalla con dos rendijas $R_1$ y $R_2$ puede pasar
+    por cualquiera de ellas. La amplitud de probabilidad de llegar al punto $P$ en la pantalla
+    final es la <span class="hl">suma coherente</span> de las amplitudes de pasar por $R_1$
+    y por $R_2$:
+  </p>
+
+  <div class="formula-box">
+    <div class="formula-label">Amplitud en la doble rendija</div>
+    $$\mathcal{A}(A \to P) = \mathcal{A}(A \to R_1 \to P) + \mathcal{A}(A \to R_2 \to P)$$
+    $$= e^{i\Phi_1} + e^{i\Phi_2}$$
+    $$P = |\mathcal{A}|^2 = 2 + 2\cos(\Phi_1 - \Phi_2) = 4\cos^2\!\left(\frac{\Delta\Phi}{2}\right)$$
+    <div class="formula-desc">
+      Donde $\Delta\Phi = \Phi_1 - \Phi_2 = \frac{2\pi}{\lambda}\,\Delta\ell$ es la diferencia de fase,
+      proporcional a la diferencia de recorrido $\Delta\ell = d\sin\theta$.
+      El patrón de interferencia refleja directamente la diferencia de acción entre ambos caminos.
+    </div>
+  </div>
+
+  <p>
+    Las franjas brillantes aparecen donde $\Delta\ell = m\lambda$ ($m \in \mathbb{Z}$):
+    las fases coinciden y hay interferencia constructiva.
+    Las franjas oscuras aparecen donde $\Delta\ell = (m + \tfrac{1}{2})\lambda$:
+    las fases son opuestas y la probabilidad se anula.
+  </p>
+
+  <!-- INTERACTIVE: Double slit -->
+  <div class="interactive-wrap reveal">
+    <div class="interactive-title">⟩ Experimento de Doble Rendija — Interactivo</div>
+    <div class="canvas-wrapper">
+      <canvas id="dslit-canvas" width="900" height="400"></canvas>
+    </div>
+    <div class="controls">
+      <div class="ctrl-group">
+        <label>Separación entre rendijas (d/λ)</label>
+        <input type="range" id="ds-sep" min="5" max="40" value="15">
+        <span class="ctrl-val" id="ds-sep-val">15</span>
+      </div>
+      <div class="ctrl-group">
+        <label>Anchura de rendija (w/λ)</label>
+        <input type="range" id="ds-width" min="1" max="10" value="3">
+        <span class="ctrl-val" id="ds-width-val">3</span>
+      </div>
+      <div class="ctrl-group">
+        <label>Mostrar caminos</label>
+        <input type="range" id="ds-rays" min="0" max="1" step="1" value="1">
+        <span class="ctrl-val" id="ds-rays-val">Sí</span>
+      </div>
+    </div>
+    <p class="canvas-caption">
+      El patrón de interferencia (derecha) emerge de la diferencia de camino entre las dos rendijas.
+      Ajusta la separación para cambiar la frecuencia de las franjas.
+    </p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════ RED DE DIFRACCIÓN ═══════════════════ -->
+<section id="difraccion" class="reveal">
+  <p class="section-label">§ 04 — Ingeniería de Caminos</p>
+  <h2>La Red de Difracción</h2>
+  <div class="divider"></div>
+
+  <p>
+    Una <span class="hl">red de difracción</span> es un conjunto de $N$ rendijas igualmente
+    espaciadas con separación $d$. Desde QED, cada rendija actúa como una fuente de amplitud,
+    y la amplitud total en un punto a ángulo $\theta$ es la suma de $N$ flechas complejas,
+    una por rendija, cada una con su propia fase:
+  </p>
+
+  <div class="formula-box">
+    <div class="formula-label">Amplitud de la red — Suma de N flechas</div>
+    $$\mathcal{A}(\theta) = \sum_{k=0}^{N-1} e^{\,i\,k\,\delta} \qquad \text{donde } \delta = \frac{2\pi\, d\sin\theta}{\lambda}$$
+    <div class="formula-desc">
+      $\delta$ es la diferencia de fase entre dos rendijas consecutivas. Cada rendija añade una flecha
+      girada en $\delta$ respecto a la anterior. Cuando $\delta = 2\pi m$ (con $m$ entero), todas las
+      flechas apuntan en la misma dirección y la amplitud es máxima: $|\mathcal{A}|^2 = N^2$.
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="formula-label">Condición de máximo — El criterio clave</div>
+    $$d\,\sin\theta_m = m\,\lambda \qquad m = 0, \pm 1, \pm 2, \ldots$$
+    <div class="formula-desc">
+      Esta condición dice: los máximos aparecen en los ángulos $\theta_m$ donde la diferencia de
+      recorrido entre rendijas adyacentes es exactamente un número entero de longitudes de onda.
+      En esos ángulos, <strong>todas las flechas se alinean</strong>: la probabilidad es $N^2$ veces
+      la de una sola rendija. Entre máximos, las flechas forman un polígono cerrado y se anulan.
+    </div>
+  </div>
+
+  <p>
+    Desde la perspectiva QED: al añadir más rendijas, estamos seleccionando ángulos específicos
+    donde las fases de todos los caminos <em>coinciden exactamente</em>. La red de difracción es,
+    literalmente, un <span class="hl-cyan">selector de caminos</span>: permite que solo los ángulos
+    donde la interferencia es perfectamente constructiva contribuyan a la probabilidad final.
+    Esta es la razón por la que los máximos de una red son mucho más agudos que los de una doble rendija:
+    con $N$ rendijas, el máximo tiene intensidad $N^2$ pero anchura $1/N$.
+  </p>
+
+  <!-- INTERACTIVE: Diffraction grating -->
+  <div class="interactive-wrap reveal">
+    <div class="interactive-title">⟩ Red de Difracción — Suma de fases</div>
+    <div class="canvas-wrapper">
+      <canvas id="grating-canvas" width="900" height="420"></canvas>
+    </div>
+    <div class="controls">
+      <div class="ctrl-group">
+        <label>N.º de rendijas</label>
+        <input type="range" id="gr-n" min="2" max="20" value="6">
+        <span class="ctrl-val" id="gr-n-val">6</span>
+      </div>
+      <div class="ctrl-group">
+        <label>Separación (d/λ)</label>
+        <input type="range" id="gr-d" min="2" max="20" value="8">
+        <span class="ctrl-val" id="gr-d-val">8</span>
+      </div>
+    </div>
+    <p class="canvas-caption">
+      Observa cómo al aumentar el número de rendijas, los máximos principales se vuelven más agudos y brillantes.
+      La "energía" se concentra en ángulos precisos donde todas las fases se suman constructivamente.
+    </p>
+  </div>
+
+  <h3>Conexión con el Espejo de Feynman</h3>
+
+  <p>
+    Feynman usó el espejo plano para ilustrar un punto sutil: si cortamos el espejo dejando solo
+    las zonas donde las flechas apuntan en la misma dirección (eliminando las zonas de cancelación),
+    ¡el espejo "refleja" en ángulos que violarían la ley de reflexión clásica! Esto es exactamente
+    una red de difracción de reflexión. El mensaje es profundo: <span class="hl">las leyes ópticas
+    clásicas no son leyes fundamentales, sino consecuencias estadísticas de la suma cuántica de caminos.</span>
+  </p>
+</section>
+
+<!-- ═══════════════════ PUNTO DE ARAGO ═══════════════════ -->
+<section id="arago" class="reveal">
+  <p class="section-label">§ 05 — La Sombra que no es Sombra</p>
+  <h2>El Punto de Arago</h2>
+  <div class="divider"></div>
+
+  <p>
+    En 1818, Siméon Denis Poisson calculó, con intención de refutar la teoría ondulatoria de
+    Fresnel, que si la luz fuera una onda, debería aparecer un punto brillante en el centro de
+    la sombra geométrica de un disco opaco circular. Convencido de que tal absurdo falsificaba
+    la teoría ondulatoria, Poisson presentó su cálculo como una reductio ad absurdum.
+    Dominique Arago realizó el experimento: el punto luminoso <em>era real</em>.
+  </p>
+
+  <div class="quote">
+    "Si la luz es una onda, debe existir un punto brillante en el centro de la sombra de un obstáculo circular.
+    Esto es, evidentemente, imposible." — Poisson, 1818. El experimento demostró lo contrario.
+  </div>
+
+  <h3>La Explicación QED del Punto de Arago</h3>
+
+  <p>
+    Desde la perspectiva de la integral de caminos, el punto de Arago tiene una explicación
+    elegante y profunda. Consideremos el punto central $P$ en el eje óptico, exactamente
+    detrás del disco:
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>El disco elimina caminos directos</h4>
+        <p>El obstáculo circular bloquea todos los caminos que pasan por su interior.
+        Solo sobreviven los caminos que rodean el borde del disco.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Simetría cilíndrica: todos los caminos del borde son iguales</h4>
+        <p>Por simetría rotacional, <span class="hl-green">todos los caminos que pasan por el borde del disco
+        y llegan al punto central $P$ tienen exactamente la misma longitud</span>.
+        Tienen, por tanto, la misma acción y la misma fase.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>Interferencia constructiva total</h4>
+        <p>Al tener todos la misma fase $\Phi = 2\pi\ell/\lambda$, todas las flechas se alinean
+        perfectamente. La suma es máxima: <span class="hl">interferencia constructiva completa</span>
+        en el centro geométrico de la sombra.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>¿Por qué solo en el centro?</h4>
+        <p>Para cualquier punto fuera del eje, los caminos que llegan desde distintas partes del
+        borde tienen diferentes longitudes (y por tanto diferentes fases), y se cancelan parcialmente.
+        Solo en el eje la simetría garantiza la igualdad de todos los caminos.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="formula-label">Condición para el Punto de Arago</div>
+    $$\ell_\theta = \sqrt{(D/2)^2 + z^2} = \text{constante para todo } \theta \in [0, 2\pi)$$
+    $$\Rightarrow \quad \Phi_\theta = \frac{2\pi\,\ell_\theta}{\lambda} = \text{const.} \quad \forall\,\theta$$
+    <div class="formula-desc">
+      Donde $D$ es el diámetro del disco, $z$ la distancia al punto $P$, y $\theta$ el ángulo
+      azimutal en el borde del disco. La igualdad de todas las fases implica interferencia
+      constructiva perfecta en $P$.
+    </div>
+  </div>
+
+  <!-- INTERACTIVE: Arago spot -->
+  <div class="interactive-wrap reveal">
+    <div class="interactive-title">⟩ Experimento del Punto de Arago — Simulación QED</div>
+    <div class="canvas-wrapper">
+      <canvas id="arago-canvas" width="900" height="420"></canvas>
+    </div>
+    <div class="controls">
+      <div class="ctrl-group">
+        <label>Diámetro del disco (D/λ)</label>
+        <input type="range" id="ar-diam" min="20" max="100" value="50">
+        <span class="ctrl-val" id="ar-diam-val">50</span>
+      </div>
+      <div class="ctrl-group">
+        <label>Distancia observador (z/λ)</label>
+        <input type="range" id="ar-dist" min="100" max="600" value="300">
+        <span class="ctrl-val" id="ar-dist-val">300</span>
+      </div>
+      <div class="ctrl-group">
+        <label>Animación</label>
+        <input type="range" id="ar-anim" min="0" max="1" step="1" value="1">
+        <span class="ctrl-val" id="ar-anim-val">On</span>
+      </div>
+    </div>
+    <p class="canvas-caption">
+      La simulación muestra la difracción de Fresnel alrededor del disco.
+      Observa el punto brillante en el centro exacto de la sombra geométrica — el Punto de Arago.
+      Las franjas concéntricas son consecuencia de la interferencia entre caminos de distinta longitud.
+    </p>
+  </div>
+
+  <h3>Consecuencias y Generalización</h3>
+
+  <p>
+    El punto de Arago es una demostración experimental directa de que <span class="hl">la
+    sombra no es una ausencia de caminos, sino una región donde los caminos supervivientes
+    interfieren destructivamente</span>. En el punto central, el disco ha hecho paradójicamente
+    un favor: al eliminar los caminos directos (que en campo libre se cancelarían parcialmente
+    entre sí), <em>ha dejado solo los caminos del borde, todos iguales, que se suman con máxima
+    eficacia</em>.
+  </p>
+
+  <p>
+    Este mismo principio es la base de las <span class="hl-cyan">zonas de Fresnel</span>:
+    herramienta matemática para calcular la difracción dividiendo el frente de onda en zonas
+    anulares cuyas contribuciones alternan entre constructiva y destructiva. El punto de Arago
+    muestra que, al bloquear las zonas pares (o impares), las zonas restantes contribuyen todas
+    constructivamente: este es el principio de la <em>lente de zona de Fresnel</em>, usada en
+    óptica de rayos X y en telecomunicaciones.
+  </p>
+</section>
+
+<!-- ═══════════════════ CONCLUSIÓN ═══════════════════ -->
+<section class="reveal">
+  <p class="section-label">§ 06 — Síntesis</p>
+  <h2>La Unidad Profunda de la Física</h2>
+  <div class="divider"></div>
+
+  <p>
+    La teoría QED de Feynman revela una verdad extraordinaria: <span class="hl">el universo no
+    es determinista en el nivel fundamental, pero el determinismo emerge de la estadística
+    cuántica</span>. Las leyes clásicas —Newton, Fermat, Snell— no son axiomas fundamentales,
+    sino consecuencias del hecho de que los caminos de mínima acción son aquellos donde la
+    interferencia constructiva es máxima.
+  </p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🌊</div>
+      <h4>Óptica geométrica</h4>
+      <p>La ley de reflexión, Snell, Fermat: todos emergen del camino de fase estacionaria cuando $\lambda \to 0$.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌀</div>
+      <h4>Óptica ondulatoria</h4>
+      <p>Interferencia, difracción, el punto de Arago: consecuencias directas de la suma de caminos con distintas fases.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚛️</div>
+      <h4>QED completa</h4>
+      <p>Describe también la creación/aniquilación de fotones, el efecto Lamb, el momento magnético del electrón: la teoría más precisa jamás formulada.</p>
+    </div>
+  </div>
+
+  <div class="quote">
+    "La física no es solo ecuaciones. Es entender por qué el mundo funciona como funciona.
+    Y aquí está la respuesta: porque todos los caminos existen, y de su suma emerge la realidad."
+    <cite>— Inspirado en R. P. Feynman, QED (1985)</cite>
+  </div>
+
+  <h3>Más Allá de la Luz: La Universalidad de la Integral de Caminos</h3>
+
+  <p>
+    Aunque hemos explorado la Electrodinámica Cuántica (QED) centrándose en los fotones,
+    <span class="hl">esta teoría es mucho más general</span>. QED describe cómo interactúan
+    la luz y la materia: no solo fotones, sino también electrones, positrones y toda partícula
+    cargada. La integral de caminos de Feynman, además, se extiende a <em>toda la física
+    cuántica</em>: partículas masivas, campos cuánticos, la teoría de quarks y gluones (QCD),
+    incluso formulaciones de la gravedad cuántica.
+  </p>
+
+  <p>
+    El fenómeno que hemos estudiado —que la realidad emerge de la suma sobre todos los
+    caminos posibles— <span class="hl-cyan">no es exclusivo de los fotones. Es aplicable
+    a toda la materia</span>. Un electrón que va de $A$ a $B$ también explora todos los
+    caminos. Una molécula, un átomo, incluso (en principio) una pelota de béisbol: todos
+    obedecen la misma regla fundamental. La diferencia es solo cuantitativa, dictada por
+    la escala de la acción comparada con $\hbar$.
+  </p>
+
+  <p>
+    Esto implica una conclusión profunda: <span class="hl">las leyes clásicas deterministas
+    que observamos a nuestra escala son el resultado de la ruta que sobrevive estadísticamente</span>;
+    aquella cuya probabilidad es máxima, o lo que es lo mismo, <span class="hl">aquella donde
+    la acción es mínima (o estacionaria)</span>. Newton no descubrió una ley fundamental:
+    descubrió la <em>sombra estadística</em> de la cuántica en el mundo macroscópico.
+    El determinismo es una ilusión emergente. En el fondo, la naturaleza es probabilística,
+    ondulatoria, y profundamente bella.
+  </p>
+
+</section>
+
+</div><!-- end .page -->
+
+<footer>
+  <p>Manuel y Hebe</p>
+  <p style="margin-top:0.5rem;opacity:0.5">Feria de óptica 2026 UCM</p>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════
+//  STARFIELD
+// ══════════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('stars-canvas');
+  const ctx = c.getContext('2d');
+  let stars = [];
+  function resize(){
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    stars = Array.from({length:200}, ()=>({
+      x: Math.random()*c.width,
+      y: Math.random()*c.height,
+      r: Math.random()*1.2+0.2,
+      a: Math.random()
+    }));
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    stars.forEach(s=>{
+      const alpha = 0.3 + 0.3*Math.sin(t*0.5+s.a*10);
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(200,200,180,${alpha})`;
+      ctx.fill();
+    });
+    t+=0.01;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════════════
+//  HERO CANVAS — animated paths
+// ══════════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('hero-canvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  function resize(){
+    c.width = c.offsetWidth;
+    c.height = c.offsetHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let t=0;
+  const N=20;
+  const paths = Array.from({length:N}, (_, i)=>({
+    amp: (Math.random()-0.5)*0.4,
+    freq: 0.5+Math.random()*1.5,
+    phase: Math.random()*Math.PI*2,
+    color: `hsl(${40+i*4},${60+i*2}%,${50+i}%)`
+  }));
+
+  function draw(){
+    if(!c.offsetParent){ requestAnimationFrame(draw); return; }
+    resize();
+    ctx.clearRect(0,0,c.width,c.height);
+
+    const W=c.width, H=c.height;
+    const sx=W*0.05, ex=W*0.85;
+    const sy=H*0.5, ey=H*0.5;
+
+    // draw paths
+    paths.forEach((p,i)=>{
+      const alpha = i===Math.floor(N/2)?0.9:0.15+0.05*Math.abs(p.amp);
+      ctx.beginPath();
+      ctx.strokeStyle = i===Math.floor(N/2)?'#c8a84b': p.color;
+      ctx.lineWidth = i===Math.floor(N/2)?2:0.8;
+      ctx.globalAlpha = alpha;
+
+      for(let x=sx; x<=ex; x+=2){
+        const frac=(x-sx)/(ex-sx);
+        const envelope = Math.sin(frac*Math.PI);
+        const y = sy + H*p.amp*envelope*Math.sin(p.freq*frac*Math.PI*4+p.phase+t);
+        if(x===sx) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    });
+
+    // endpoint glow
+    ctx.globalAlpha=1;
+    const grad = ctx.createRadialGradient(ex,ey,0,ex,ey,30);
+    grad.addColorStop(0,'rgba(200,168,75,0.8)');
+    grad.addColorStop(1,'rgba(200,168,75,0)');
+    ctx.beginPath();
+    ctx.arc(ex,ey,30,0,Math.PI*2);
+    ctx.fillStyle=grad;
+    ctx.fill();
+
+    // source glow
+    const grad2 = ctx.createRadialGradient(sx,sy,0,sx,sy,20);
+    grad2.addColorStop(0,'rgba(79,195,212,0.7)');
+    grad2.addColorStop(1,'rgba(79,195,212,0)');
+    ctx.beginPath();
+    ctx.arc(sx,sy,20,0,Math.PI*2);
+    ctx.fillStyle=grad2;
+    ctx.fill();
+
+    // labels
+    ctx.globalAlpha=0.8;
+    ctx.fillStyle='#4fc3d4';
+    ctx.font='bold 14px JetBrains Mono, monospace';
+    ctx.fillText('A',sx-20,sy+5);
+    ctx.fillStyle='#c8a84b';
+    ctx.fillText('B',ex+10,ey+5);
+
+    t+=0.015;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════════════
+//  PHASOR (FEYNMAN ARROWS)
+// ══════════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('phasor-canvas');
+  const ctx = c.getContext('2d');
+  const nSlider = document.getElementById('phasor-n');
+  const spSlider = document.getElementById('phasor-spread');
+  const nVal = document.getElementById('phasor-n-val');
+  const spVal = document.getElementById('phasor-spread-val');
+
+  function resize() {
+    const container = c.parentElement;
+    const rect = container.getBoundingClientRect();
+    c.width = Math.min(900, rect.width);
+    c.height = window.innerWidth < 768 ? 280 : 340;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function update(){
+    nVal.textContent = nSlider.value;
+    spVal.textContent = spSlider.value;
+  }
+  nSlider.addEventListener('input', update);
+  spSlider.addEventListener('input', update);
+
+  let t=0;
+  function draw(){
+    const W=c.width, H=c.height;
+    const N=parseInt(nSlider.value);
+    const spread=parseFloat(spSlider.value);
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#04060f';
+    ctx.fillRect(0,0,W,H);
+
+    // Left panel: individual arrows
+    const lW = W*0.45;
+    const cx1=lW/2, cy1=H/2;
+
+    ctx.strokeStyle='rgba(200,168,75,0.1)';
+    ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cx1,cy1,80,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,cy1); ctx.lineTo(lW,cy1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx1,0); ctx.lineTo(cx1,H); ctx.stroke();
+
+    const arrows=[];
+    for(let i=0;i<N;i++){
+      const frac=(i/(N-1)-0.5);
+      const phase = frac*spread*Math.PI + t*0.5;
+      arrows.push({phase, color:`hsl(${200+frac*120},80%,60%)`});
+    }
+
+    const arrowLen=55;
+    arrows.forEach((a,i)=>{
+      const x=cx1+arrowLen*Math.cos(a.phase);
+      const y=cy1+arrowLen*Math.sin(a.phase);
+      ctx.beginPath();
+      ctx.moveTo(cx1,cy1);
+      ctx.lineTo(x,y);
+      ctx.strokeStyle=a.color;
+      ctx.lineWidth=1.2;
+      ctx.globalAlpha=0.6;
+      ctx.stroke();
+      // arrowhead
+      const ang=Math.atan2(y-cy1,x-cx1);
+      ctx.beginPath();
+      ctx.moveTo(x,y);
+      ctx.lineTo(x-8*Math.cos(ang-0.4),y-8*Math.sin(ang-0.4));
+      ctx.lineTo(x-8*Math.cos(ang+0.4),y-8*Math.sin(ang+0.4));
+      ctx.closePath();
+      ctx.fillStyle=a.color;
+      ctx.fill();
+      ctx.globalAlpha=1;
+    });
+
+    // label
+    ctx.fillStyle='rgba(200,168,75,0.5)';
+    ctx.font='11px JetBrains Mono, monospace';
+    ctx.fillText('Flechas individuales',10,20);
+
+    // Separator
+    ctx.strokeStyle='rgba(200,168,75,0.15)';
+    ctx.lineWidth=1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(lW,0); ctx.lineTo(lW,H); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Right panel: chain sum
+    const cx2=lW+30, cy2=H/2;
+    const scale=0.9;
+    let rx=cx2, ry=cy2;
+    let sumX=0, sumY=0;
+
+    arrows.forEach((a,i)=>{
+      const len = (W-lW-60)/N * scale;
+      const nx=rx+len*Math.cos(a.phase);
+      const ny=ry+len*Math.sin(a.phase);
+
+      ctx.beginPath();
+      ctx.moveTo(rx,ry);
+      ctx.lineTo(nx,ny);
+      ctx.strokeStyle=a.color;
+      ctx.lineWidth=1.2;
+      ctx.globalAlpha=0.55;
+      ctx.stroke();
+      ctx.globalAlpha=1;
+
+      sumX+=len*Math.cos(a.phase);
+      sumY+=len*Math.sin(a.phase);
+      rx=nx; ry=ny;
+    });
+
+    // Resultant
+    ctx.beginPath();
+    ctx.moveTo(cx2,cy2);
+    ctx.lineTo(cx2+sumX,cy2+sumY);
+    ctx.strokeStyle='#f0d070';
+    ctx.lineWidth=3;
+    ctx.stroke();
+
+    // arrowhead for resultant
+    const ang2=Math.atan2(sumY,sumX);
+    ctx.beginPath();
+    ctx.moveTo(cx2+sumX,cy2+sumY);
+    ctx.lineTo(cx2+sumX-12*Math.cos(ang2-0.35),cy2+sumY-12*Math.sin(ang2-0.35));
+    ctx.lineTo(cx2+sumX-12*Math.cos(ang2+0.35),cy2+sumY-12*Math.sin(ang2+0.35));
+    ctx.closePath();
+    ctx.fillStyle='#f0d070';
+    ctx.fill();
+
+    // magnitude label
+    const mag=Math.sqrt(sumX*sumX+sumY*sumY).toFixed(1);
+    ctx.fillStyle='#f0d070';
+    ctx.font='bold 12px JetBrains Mono, monospace';
+    ctx.fillText(`|A| = ${mag}`,lW+30,H-15);
+    ctx.fillStyle='rgba(200,168,75,0.5)';
+    ctx.font='11px JetBrains Mono, monospace';
+    ctx.fillText('Suma vectorial (amplitud total)',lW+30,20);
+
+    t+=0.005;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════════════
+//  PHOTON FREE SPACE
+// ══════════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('photon-canvas');
+  const ctx = c.getContext('2d');
+  const pathsSlider = document.getElementById('ph-paths');
+  const ampSlider = document.getElementById('ph-amp');
+  const pathsVal = document.getElementById('ph-paths-val');
+  const ampVal = document.getElementById('ph-amp-val');
+  
+  function resize() {
+    const container = c.parentElement;
+    const rect = container.getBoundingClientRect();
+    c.width = Math.min(900, rect.width);
+    c.height = window.innerWidth < 768 ? 260 : 320;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  
+  pathsSlider.addEventListener('input',()=>{pathsVal.textContent=pathsSlider.value;});
+  ampSlider.addEventListener('input',()=>{ampVal.textContent=ampSlider.value;});
+
+  let t=0;
+  function draw(){
+    const W=c.width, H=c.height;
+    const N=parseInt(pathsSlider.value);
+    const maxAmp=parseFloat(ampSlider.value);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#040810';
+    ctx.fillRect(0,0,W,H);
+
+    const sx=80, sy=H/2;
+    const ex=W-80, ey=H/2;
+
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,0.03)';
+    ctx.lineWidth=0.5;
+    for(let y=0;y<H;y+=30){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    for(let x=0;x<W;x+=30){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+
+    // paths
+    for(let i=0;i<N;i++){
+      const frac = i/(N-1)-0.5;
+      const midY = (H/2) + frac*maxAmp*2;
+      const pathLen = Math.sqrt((ex-sx)**2+(midY-sy)**2)+Math.sqrt((ex-sx)**2+(midY-ey)**2);
+      const straight = ex-sx;
+      const phaseDiff = (pathLen-straight)*0.08; // scaled phase
+      const hue = (phaseDiff*180/Math.PI)%360;
+      const sat = 70+Math.cos(phaseDiff)*20;
+
+      ctx.beginPath();
+      ctx.moveTo(sx,sy);
+      ctx.quadraticCurveTo((sx+ex)/2, midY, ex, ey);
+      ctx.strokeStyle=`hsl(${hue},${sat}%,55%)`;
+      ctx.lineWidth = i===Math.floor(N/2)?2.5:0.8;
+      ctx.globalAlpha = i===Math.floor(N/2)?0.95:0.3;
+      ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+
+    // glow source
+    ['#4fc3d4','#c8a84b'].forEach((col,idx)=>{
+      const px=idx===0?sx:ex, py=sy;
+      const g=ctx.createRadialGradient(px,py,0,px,py,25);
+      g.addColorStop(0,col+'dd');
+      g.addColorStop(1,col+'00');
+      ctx.beginPath();
+      ctx.arc(px,py,25,0,Math.PI*2);
+      ctx.fillStyle=g;
+      ctx.fill();
+    });
+
+    // Straight path label
+    ctx.fillStyle='#c8a84b';
+    ctx.font='bold 12px JetBrains Mono,monospace';
+    ctx.fillText('Camino de mínima acción (Fermat)',(sx+ex)/2-120,sy-15);
+
+    // Phase legend
+    ctx.font='11px JetBrains Mono,monospace';
+    ctx.fillStyle='rgba(200,168,75,0.6)';
+    ctx.fillText('Color = fase del camino',10,H-10);
+
+    t+=0.01;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════════════
+//  DOUBLE SLIT
+// ══════════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('dslit-canvas');
+  const ctx = c.getContext('2d');
+  const sepSlider=document.getElementById('ds-sep');
+  const widSlider=document.getElementById('ds-width');
+  const raysSlider=document.getElementById('ds-rays');
+  const sepVal=document.getElementById('ds-sep-val');
+  const widVal=document.getElementById('ds-width-val');
+  const raysVal=document.getElementById('ds-rays-val');
+  
+  function resize() {
+    const container = c.parentElement;
+    const rect = container.getBoundingClientRect();
+    c.width = Math.min(900, rect.width);
+    c.height = window.innerWidth < 768 ? 320 : 400;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  
+  sepSlider.addEventListener('input',()=>sepVal.textContent=sepSlider.value);
+  widSlider.addEventListener('input',()=>widVal.textContent=widSlider.value);
+  raysSlider.addEventListener('input',()=>raysVal.textContent=raysSlider.value==='1'?'Sí':'No');
+
+  let t=0;
+  function draw(){
+    const W=c.width, H=c.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#040810';
+    ctx.fillRect(0,0,W,H);
+
+    const d=parseFloat(sepSlider.value)*2;
+    const w=parseFloat(widSlider.value)*2;
+    const showRays=raysSlider.value==='1';
+
+    const screenX=W*0.35;
+    const detX=W-60;
+    const srcX=50, srcY=H/2;
+    const slitY1=H/2-d/2, slitY2=H/2+d/2;
+
+    // Source wave animation
+    for(let r=10;r<screenX-srcX;r+=20){
+      const alpha=Math.max(0,0.2-(r/(screenX-srcX))*0.18);
+      ctx.beginPath();
+      ctx.arc(srcX,srcY,r,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(79,195,212,${alpha})`;
+      ctx.lineWidth=0.8;
+      ctx.stroke();
+    }
+
+    // Draw barrier
+    ctx.fillStyle='rgba(120,100,60,0.8)';
+    ctx.fillRect(screenX-4,0,8,slitY1-w/2);
+    ctx.fillRect(screenX-4,slitY1+w/2,8,slitY2-w/2-(slitY1+w/2));
+    ctx.fillRect(screenX-4,slitY2+w/2,8,H-(slitY2+w/2));
+
+    // Slits highlight
+    ctx.fillStyle='rgba(79,195,212,0.08)';
+    ctx.fillRect(screenX-2,slitY1-w/2,4,w);
+    ctx.fillRect(screenX-2,slitY2-w/2,4,w);
+
+    // Rays
+    if(showRays){
+      for(let yi=-3;yi<=3;yi++){
+        const ry1=slitY1+yi*(w/6);
+        const ry2=slitY2+yi*(w/6);
+
+        for(let py=20;py<H;py+=12){
+          const dist1=Math.sqrt((detX-screenX)**2+(py-ry1)**2);
+          const dist2=Math.sqrt((detX-screenX)**2+(py-ry2)**2);
+          const phase=(dist1-dist2)*Math.PI/25+t;
+          const interference=(1+Math.cos(phase))/2;
+
+          if(interference>0.1){
+            ctx.beginPath();
+            ctx.moveTo(screenX,ry1);
+            ctx.lineTo(detX,py);
+            ctx.strokeStyle=`rgba(79,195,212,${0.04*interference})`;
+            ctx.lineWidth=0.6;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(screenX,ry2);
+            ctx.lineTo(detX,py);
+            ctx.strokeStyle=`rgba(200,168,75,${0.04*interference})`;
+            ctx.lineWidth=0.6;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Interference pattern on right screen
+    for(let py=5;py<H;py+=1){
+      const y=py-H/2;
+      const sinTheta=y/Math.sqrt((detX-screenX)**2+y**2);
+      const delta=Math.PI*d*sinTheta/25;
+      const deltaW=Math.PI*w*sinTheta/25;
+      const singleSlit = deltaW===0?1:Math.pow(Math.sin(deltaW)/deltaW,2);
+      const interference = Math.pow(Math.cos(delta),2)*singleSlit;
+
+      const intensity=Math.min(1,interference);
+      const r=Math.floor(79+121*intensity);
+      const g=Math.floor(195*intensity*0.7+168*intensity*0.3);
+      const b=Math.floor(212*intensity*0.5+75*intensity*0.2);
+
+      ctx.fillStyle=`rgba(${r},${g},${b},${0.8*intensity})`;
+      ctx.fillRect(detX,py,30,1);
+    }
+
+    // Screen glow
+    ctx.strokeStyle='rgba(200,168,75,0.2)';
+    ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(detX,0); ctx.lineTo(detX,H); ctx.stroke();
+
+    // Labels
+    ctx.fillStyle='rgba(79,195,212,0.7)';
+    ctx.font='11px JetBrains Mono,monospace';
+    ctx.fillText('Fuente',srcX-15,H-10);
+    ctx.fillText('Pantalla con rendijas',screenX-40,H-10);
+    ctx.fillStyle='rgba(200,168,75,0.7)';
+    ctx.fillText('Patrón de interferencia',detX+2,H-10);
+
+    // Phase difference label
+    ctx.fillStyle='rgba(200,168,75,0.5)';
+    ctx.font='10px JetBrains Mono,monospace';
+    ctx.fillText('Δφ = 2πd·sinθ/λ',screenX+10,20);
+
+    t+=0.01;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════════════
+//  DIFFRACTION GRATING
+// ══════════════════════════════════════════════════
+(function(){
+  const c=document.getElementById('grating-canvas');
+  const ctx=c.getContext('2d');
+  const nSlider=document.getElementById('gr-n');
+  const dSlider=document.getElementById('gr-d');
+  const nVal=document.getElementById('gr-n-val');
+  const dVal=document.getElementById('gr-d-val');
+  
+  function resize() {
+    const container = c.parentElement;
+    const rect = container.getBoundingClientRect();
+    c.width = Math.min(900, rect.width);
+    c.height = window.innerWidth < 768 ? 340 : 420;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  
+  nSlider.addEventListener('input',()=>nVal.textContent=nSlider.value);
+  dSlider.addEventListener('input',()=>dVal.textContent=dSlider.value);
+
+  let t=0;
+  function draw(){
+    const W=c.width, H=c.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#04080f';
+    ctx.fillRect(0,0,W,H);
+
+    const N=parseInt(nSlider.value);
+    const d=parseFloat(dSlider.value)*8;
+
+    const gratingX=W*0.3;
+    const detX=W-50;
+    const totalH=d*(N-1);
+    const startY=H/2-totalH/2;
+
+    // Draw grating
+    for(let i=0;i<N;i++){
+      const sy=startY+i*d;
+      ctx.beginPath();
+      ctx.arc(gratingX,sy,4,0,Math.PI*2);
+      ctx.fillStyle='#4fc3d4';
+      ctx.fill();
+
+      // glow
+      const g=ctx.createRadialGradient(gratingX,sy,0,gratingX,sy,20);
+      g.addColorStop(0,'rgba(79,195,212,0.3)');
+      g.addColorStop(1,'rgba(79,195,212,0)');
+      ctx.fillStyle=g;
+      ctx.beginPath();
+      ctx.arc(gratingX,sy,20,0,Math.PI*2);
+      ctx.fill();
+    }
+
+    // Grating body
+    ctx.fillStyle='rgba(100,80,40,0.5)';
+    ctx.fillRect(gratingX-2,startY-10,4,totalH+20);
+
+    // Pattern computation
+    const maxAngle=Math.PI/2*0.85;
+    const steps=400;
+
+    // Draw pattern
+    for(let j=0;j<steps;j++){
+      const angle=-maxAngle+j*(2*maxAngle/steps);
+      const py=H/2+Math.tan(angle)*(detX-gratingX);
+      if(py<0||py>H) continue;
+
+      const sinT=Math.sin(angle);
+      const delta=Math.PI*d*sinT/40;
+      let re=0, im=0;
+      for(let i=0;i<N;i++){
+        re+=Math.cos(i*2*delta);
+        im+=Math.sin(i*2*delta);
+      }
+      const I=(re*re+im*im)/(N*N);
+
+      const hue=180+angle*60;
+      ctx.fillStyle=`hsla(${hue},80%,65%,${I*0.9})`;
+      ctx.fillRect(detX,py-1,40,2);
+    }
+
+    // Ray animation
+    for(let i=0;i<N;i++){
+      const sy=startY+i*d;
+      const orders=[0,-1,1];
+      orders.forEach(m=>{
+        const sinA=m*40/d;
+        if(Math.abs(sinA)>0.9) return;
+        const angle=Math.asin(sinA);
+        const ey=H/2+Math.tan(angle)*(detX-gratingX);
+        if(ey<0||ey>H) return;
+
+        const progress=(t*0.3+i*0.1)%1;
+        const px=gratingX+progress*(detX-gratingX);
+        const py=sy+progress*(ey-sy);
+
+        ctx.beginPath();
+        ctx.arc(px,py,2,0,Math.PI*2);
+        const col=m===0?'rgba(200,168,75,0.8)':m===1?'rgba(79,195,212,0.7)':'rgba(224,90,74,0.7)';
+        ctx.fillStyle=col;
+        ctx.fill();
+      });
+    }
+
+    // Labels
+    ctx.fillStyle='rgba(79,195,212,0.7)';
+    ctx.font='11px JetBrains Mono,monospace';
+    ctx.fillText('Red de difracción',gratingX-50,20);
+    ctx.fillStyle='rgba(200,168,75,0.7)';
+    ctx.fillText('Patrón de difracción',detX,20);
+    ctx.fillStyle='rgba(200,168,75,0.5)';
+    ctx.font='10px JetBrains Mono,monospace';
+    ctx.fillText('d·sinθ = mλ',gratingX+20,H-10);
+
+    t+=0.015;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════════════
+//  ARAGO SPOT
+// ══════════════════════════════════════════════════
+(function(){
+  const c=document.getElementById('arago-canvas');
+  const ctx=c.getContext('2d');
+  const diamSlider=document.getElementById('ar-diam');
+  const distSlider=document.getElementById('ar-dist');
+  const animSlider=document.getElementById('ar-anim');
+  const diamVal=document.getElementById('ar-diam-val');
+  const distVal=document.getElementById('ar-dist-val');
+  const animVal=document.getElementById('ar-anim-val');
+  
+  function resize() {
+    const container = c.parentElement;
+    const rect = container.getBoundingClientRect();
+    c.width = Math.min(900, rect.width);
+    c.height = window.innerWidth < 768 ? 340 : 420;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  
+  diamSlider.addEventListener('input',()=>diamVal.textContent=diamSlider.value);
+  distSlider.addEventListener('input',()=>distVal.textContent=distSlider.value);
+  animSlider.addEventListener('input',()=>animVal.textContent=animSlider.value==='1'?'On':'Off');
+
+  let t=0;
+  function draw(){
+    const W=c.width, H=c.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#040810';
+    ctx.fillRect(0,0,W,H);
+
+    const R=parseFloat(diamSlider.value)*0.5;
+    const z=parseFloat(distSlider.value);
+    const anim=animSlider.value==='1';
+    const lambda=15;
+
+    // Layout
+    const srcX=60, diskX=W*0.38, obsX=W-60;
+    const srcY=H/2, diskY=H/2, obsY=H/2;
+
+    // Incident wave animation
+    if(anim){
+      for(let r=10;r<diskX-srcX;r+=lambda){
+        const phase=(t*lambda)%lambda;
+        const rr=r-phase;
+        if(rr<=0) continue;
+        ctx.beginPath();
+        ctx.arc(srcX,srcY,rr,-Math.PI/2,Math.PI/2);
+        ctx.strokeStyle=`rgba(79,195,212,${0.25-rr/(diskX-srcX)*0.2})`;
+        ctx.lineWidth=0.7;
+        ctx.stroke();
+      }
+    }
+
+    // Disk obstacle
+    const diskGrad=ctx.createRadialGradient(diskX,diskY,0,diskX,diskY,R);
+    diskGrad.addColorStop(0,'rgba(30,25,15,1)');
+    diskGrad.addColorStop(1,'rgba(80,60,20,0.9)');
+    ctx.beginPath();
+    ctx.arc(diskX,diskY,R,0,Math.PI*2);
+    ctx.fillStyle='rgba(40,30,10,0.95)';
+    ctx.fill();
+    ctx.strokeStyle='rgba(200,168,75,0.4)';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+
+    // Shadow region (geometric)
+    ctx.fillStyle='rgba(0,0,0,0.25)';
+    ctx.fillRect(diskX,diskY-R,obsX-diskX,R*2);
+    ctx.fillStyle='rgba(0,0,0,0)';
+
+    // Diffracted waves from rim — Arago point
+    const numRimPoints=60;
+    // Draw rim-to-observation-plane paths
+    for(let i=0;i<numRimPoints;i++){
+      const rimAngle=(i/numRimPoints)*Math.PI*2;
+      const rx=diskX+R*Math.cos(rimAngle);
+      const ry=diskY+R*Math.sin(rimAngle);
+
+      // Draw path to observation screen center
+      if(anim){
+        const progress=((t*0.04)+i/numRimPoints)%1;
+        const px=rx+progress*(obsX-rx);
+        const py=ry+progress*(obsY-ry);
+        ctx.beginPath();
+        ctx.arc(px,py,1.5,0,Math.PI*2);
+        const dist=Math.sqrt((rx-diskX)**2+(ry-diskY)**2);
+        ctx.fillStyle=`rgba(200,168,75,0.6)`;
+        ctx.fill();
+      }
+
+      // Thin ray
+      ctx.beginPath();
+      ctx.moveTo(rx,ry);
+      ctx.lineTo(obsX,obsY);
+      ctx.strokeStyle='rgba(200,168,75,0.04)';
+      ctx.lineWidth=0.5;
+      ctx.stroke();
+    }
+
+    // Compute Fresnel diffraction pattern on right side
+    const halfH=H/2;
+    for(let py=5;py<H;py+=1){
+      const y=py-halfH;
+      let re=0, im=0;
+
+      // Integrate over rim and beyond (Fresnel zones outside disk)
+      const rho_min=R;
+      const rho_max=R+z*0.5;
+      const steps=80;
+      for(let k=0;k<=steps;k++){
+        const rho=rho_min+k*(rho_max-rho_min)/steps;
+        const dist=Math.sqrt((obsX-diskX)**2+(y-0)**2+rho**2);
+        // Simplified: approximate zone contribution
+        const phase=2*Math.PI*dist/lambda+(anim?t*0.3:0);
+        const amp=rho/(dist*dist)*0.05;
+        re+=amp*Math.cos(phase);
+        im+=amp*Math.sin(phase);
+      }
+      const I=Math.min(1,(re*re+im*im)*800);
+
+      if(I>0.01){
+        const isCenter=Math.abs(y)<3;
+        if(isCenter){
+          ctx.fillStyle=`rgba(255,240,180,${Math.min(1,I*1.5)})`;
+        } else {
+          ctx.fillStyle=`rgba(200,168,75,${I*0.9})`;
+        }
+        ctx.fillRect(obsX-5,py,15,1);
+      }
+    }
+
+    // Geometric shadow indicator
+    ctx.strokeStyle='rgba(255,50,50,0.15)';
+    ctx.setLineDash([6,4]);
+    ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(diskX,diskY-R); ctx.lineTo(obsX,diskY-R); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(diskX,diskY+R); ctx.lineTo(obsX,diskY+R); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Arago spot highlight
+    const spotGrad=ctx.createRadialGradient(obsX,obsY,0,obsX,obsY,8);
+    spotGrad.addColorStop(0,'rgba(255,240,150,0.95)');
+    spotGrad.addColorStop(0.5,'rgba(200,168,75,0.5)');
+    spotGrad.addColorStop(1,'rgba(200,168,75,0)');
+    ctx.beginPath(); ctx.arc(obsX,obsY,8,0,Math.PI*2);
+    ctx.fillStyle=spotGrad; ctx.fill();
+
+    // Labels
+    ctx.fillStyle='rgba(79,195,212,0.8)';
+    ctx.font='bold 11px JetBrains Mono,monospace';
+    ctx.fillText('Láser',srcX-15,H-10);
+
+    ctx.fillStyle='rgba(200,168,75,0.8)';
+    ctx.fillText('Disco opaco',diskX-35,20);
+
+    ctx.fillStyle='rgba(255,50,50,0.5)';
+    ctx.font='10px JetBrains Mono,monospace';
+    ctx.fillText('← Sombra geométrica →',diskX+20,diskY-R-5);
+
+    ctx.fillStyle='rgba(255,240,150,0.9)';
+    ctx.font='bold 11px JetBrains Mono,monospace';
+    ctx.fillText('★ Punto de Arago',obsX-60,obsY-15);
+    ctx.font='10px JetBrains Mono,monospace';
+    ctx.fillStyle='rgba(200,168,75,0.6)';
+    ctx.fillText('(todos los caminos tienen',obsX-70,obsY+20);
+    ctx.fillText('la misma fase → máximo)',obsX-65,obsY+33);
+
+    // Equal path length illustration
+    const numArrows=6;
+    for(let i=0;i<numArrows;i++){
+      const a=(i/numArrows)*Math.PI*2;
+      const rx=diskX+R*Math.cos(a);
+      const ry=diskY+R*Math.sin(a);
+      const len=Math.sqrt((obsX-rx)**2+(obsY-ry)**2);
+
+      // All paths same length indicator
+      if(i===0 || i===numArrows/2){
+        ctx.fillStyle='rgba(79,195,212,0.5)';
+        ctx.font='9px JetBrains Mono,monospace';
+      }
+    }
+
+    t+=0.04;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════════════
+//  SCROLL REVEAL
+// ══════════════════════════════════════════════════
+const revealEls=document.querySelectorAll('.reveal');
+const revealObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('visible'); }
+  });
+},{threshold:0.1});
+revealEls.forEach(el=>revealObs.observe(el));
+</script>
+</body>
+</html>
